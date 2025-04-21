@@ -1,0 +1,15 @@
+torch
+torchaudio
+pyannote.audio==3.1
+openai-whisper
+pydub
+numpy==1.26.4
+transformers
+transformers[torch]
+soundfile
+huggingface-hub
+accelerate
+evaluate
+jiwer
+librosa
+threading
