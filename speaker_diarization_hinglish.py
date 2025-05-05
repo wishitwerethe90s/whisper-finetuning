@@ -7,11 +7,12 @@ from pydub import AudioSegment
 import datetime
 import warnings
 from secret_keys import huggingface_token
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 warnings.filterwarnings("ignore")
 
 class SpeakerDiarization:
-    def __init__(self, pyannote_auth_token=None, whisper_model="base"):
+    def __init__(self, pyannote_auth_token=None):
         """
         Initialize the speaker diarization and transcription pipeline.
         
@@ -23,8 +24,9 @@ class SpeakerDiarization:
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         print(f"Using device: {self.device}")
         
-        # Initialize Whisper model
-        self.whisper_model = whisper.load_model(whisper_model, device=self.device)
+        # Load the model and tokenizer
+        self.transcription_model = AutoModelForSeq2SeqLM.from_pretrained("ar5entum/marianMT_hin_eng_cs")  
+        self.tokenizer = AutoTokenizer.from_pretrained("ar5entum/marianMT_hin_eng_cs")
         
         # Initialize Pyannote diarization pipeline
         if not pyannote_auth_token:
@@ -56,7 +58,7 @@ class SpeakerDiarization:
         segment.export(temp_path, format="wav")
         
         # Transcribe with Whisper
-        result = self.whisper_model.transcribe(temp_path, fp16=False)
+        result = self.transcription_model.transcribe(temp_path, fp16=False)
         
         # Clean up temporary file
         os.remove(temp_path)
@@ -131,15 +133,15 @@ if __name__ == "__main__":
     # Initialize the pipeline
     diarizer = SpeakerDiarization(
         pyannote_auth_token=PYANNOTE_AUTH_TOKEN,
-        whisper_model="medium"  # Use larger models like "medium" or "large" for better transcription
+        whisper_model="small"  # Use larger models like "medium" or "large" for better transcription
     )
     
     # Process an audio file
-    audio_file = "datasets/mucs/test/w5Jyq3XMbb3WwiKQ.wav"
+    audio_file = "samples/trs-clips-1-[00.00-01.00].mp3"
     results = diarizer.process_audio(audio_file)
     
     # Display results
     diarizer.display_transcript(results)
     
     # Save transcript to file
-    diarizer.save_transcript(results, "w5Jyq3XMbb3WwiKQ.txt")
+    diarizer.save_transcript(results, "diarized_transcript.txt")

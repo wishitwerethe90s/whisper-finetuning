@@ -4,7 +4,7 @@ from secret_keys import huggingface_token
 # Initialize with your HuggingFace token
 diarizer = SpeakerDiarization(
     pyannote_auth_token=huggingface_token,
-    whisper_model="tiny"  # Choose model size based on your needs and hardware
+    whisper_model="small"  # Choose model size based on your needs and hardware
 )
 
 # Process your audio file

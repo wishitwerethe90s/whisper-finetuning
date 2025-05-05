@@ -56,7 +56,7 @@ except Exception as e:
 
 # Step 2: Prepare processor components
 try:
-    model_name = "openai/whisper-tiny"
+    model_name = "openai/whisper-small"
     logger.info(f"Loading model components for {model_name}")
     
     feature_extractor = WhisperFeatureExtractor.from_pretrained(model_name)
